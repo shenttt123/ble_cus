@@ -16,9 +16,6 @@
 #include "ble_advertising.h"
 #include "ble_conn_params.h"
 #include "boards.h"
-
-
-
 #include "ble_bas.h"
 #include "ble_dis.h"
 
@@ -45,6 +42,7 @@
 
 NRF_BLE_QWR_DEF(m_qwr);
 NRF_BLE_GATT_DEF(m_gatt);
+BLE_BAS_DEF(m_bas);
 BLE_ADVERTISING_DEF(m_advertising);
 
 
@@ -264,14 +262,28 @@ static void nrf_qwr_error_handler(uint32_t nrf_error)
 //battery used to turn on notifications timer and sampling when a new battery level is measured
 void ble_bas_evt_handler(ble_bas_t * p_bas, ble_bas_evt_t * p_evt)
 {
+   switch(p_evt->evt_type)
+   {
+      case BLE_BAS_EVT_NOTIFICATION_ENABLED:
+            NRF_LOG_INFO("wafsdted... ");
+         break;
+
+      case BLE_BAS_EVT_NOTIFICATION_DISABLED:
+      NRF_LOG_INFO("asdf ");
+         break;
+
+      default:
+         break;
+   }
+}
 /* Step: 9 Initialize the services  */
 static void services_init(void)
 {
   ret_code_t err_code;
- nrf_ble_qwr_init_t  qwr_init = {0};
- 
- ble_bas_init_t      bas_init = {0};
- ble_dis_init_t      dis_init = {0};
+  nrf_ble_qwr_init_t  qwr_init = {0};
+
+  ble_bas_init_t      bas_init = {0};
+  ble_dis_init_t      dis_init = {0};
    
 
 
@@ -312,22 +324,6 @@ static void services_init(void)
 }
 
 
-   ret_code_t err_code;
-
-   switch(p_evt->evt_type)
-   {
-      case BLE_BAS_EVT_NOTIFICATION_ENABLED:
-            NRF_LOG_INFO("wafsdted... ");
-         break;
-
-      case BLE_BAS_EVT_NOTIFICATION_DISABLED:
-      NRF_LOG_INFO("asdf ");
-         break;
-
-      default:
-         break;
-   }
-}
 /* step 10.2 create an error handler for conn params uptade */
 static void conn_params_error_handler(uint32_t nrf_error)
 {
